@@ -27,10 +27,7 @@ import {identity} from "../basicfunctions"
 type Props = {};
 
 const BUTTON_RADIUS = 50;
-const BORDER_RADIUS = 15;
 const RADIAL_CHOOSER_DIA = 120;
-const RADIUS = (RADIAL_CHOOSER_DIA / 2) - BORDER_RADIUS;
-const STROKE = 2 * Math.PI * RADIUS;
 const LONG_PRESS_DELAY = 300;
 
 const rcbStyles = StyleSheet.create({
@@ -59,9 +56,29 @@ function layerSwitch(lastDeg, deg) {
     else return 0;
 }
 
-class LoadingRing extends Component {
+function LoadingRing({innerRadius, outerRadius, progress}) {
+    const borderWidth = outerRadius - innerRadius;
+    const circleRadius = innerRadius + borderWidth / 2;
+    const outerDiameter = outerRadius * 2;
+    const stroke = 2 * Math.PI * circleRadius;
 
+    return (<Svg width={outerDiameter} height={outerDiameter}
+         viewBox={`0 0 ${outerDiameter} ${outerDiameter}`}>
+        <Circle cx={outerRadius} cy={outerRadius}
+                r={circleRadius}
+                fill={"none"} stroke={"#e6e6e6"}
+                strokeWidth={borderWidth}/>
+
+        <Circle cx={outerRadius} cy={outerRadius}
+                r={circleRadius}
+                fill={"none"} stroke={"#f77a52"}
+                strokeWidth={borderWidth}
+                strokeDasharray={stroke}
+                strokeDashoffset={stroke * (1 - progress)}/>
+    </Svg>);
 }
+
+
 
 //https://codepen.io/xgad/post/svg-radial-progress-meters
 export default class RadialChooser extends Component<Props> {
@@ -79,12 +96,34 @@ export default class RadialChooser extends Component<Props> {
         };
     }
 
-    reset = () => {
-        console.log("reset!");
+    resetTouch = () => {
         this.state.touchState.lastGrant = null;
         this.state.touchState.isSelected = false;
         this.state.initialPos = null;
         this.state.lastDeg = 0;
+    };
+
+    initTouchAfterLongPress = (evt) => {
+        this.setState(oldState => {
+            oldState.touchState.lastGrant = Date.now();
+            return oldState;
+        });
+        const pageX = evt.nativeEvent.pageX;
+        const pageY = evt.nativeEvent.pageY;
+        setTimeout(() => {
+                if (this.state.touchState.lastGrant
+                    && (Date.now() - this.state.touchState.lastGrant) <= (LONG_PRESS_DELAY + 50)) {
+                    this.setState(oldState => {
+                        oldState.touchState.isSelected = true;
+                        oldState.initialPos = {
+                            x: pageX,
+                            y: pageY
+                        };
+                        return oldState;
+                    });
+                }
+            }, LONG_PRESS_DELAY
+        )
     };
 
     updateRadialState = (evt) => {
@@ -116,55 +155,16 @@ export default class RadialChooser extends Component<Props> {
 
     render() {
         return (
-
             <View style={rcbStyles.container}
                   onPress={identity}
                   onStartShouldSetResponder={(evt) => true}
                   onMoveShouldSetResponder={(evt) => true}
-                  onResponderGrant={(evt) => {
-                      this.setState(oldState => {
-                          oldState.touchState.lastGrant = Date.now();
-                          return oldState;
-                      });
-                      const pageX = evt.nativeEvent.pageX;
-                      const pageY = evt.nativeEvent.pageY;
-                      setTimeout(() => {
-                              if (this.state.touchState.lastGrant
-                                  && (Date.now() - this.state.touchState.lastGrant) <= (LONG_PRESS_DELAY + 50)) {
-                                  console.log('LongPress');
-                                  this.setState(oldState => {
-                                      oldState.touchState.isSelected = true;
-                                      oldState.initialPos = {
-                                          x: pageX,
-                                          y: pageY
-                                      };
-                                      return oldState;
-                                  });
-                              }
-                          }, LONG_PRESS_DELAY
-                      )
-                  }}
-                  onResponderReject={this.reset}
-                  onResponderRelease={this.reset}
+                  onResponderGrant={this.initTouchAfterLongPress}
+                  onResponderReject={this.resetTouch}
+                  onResponderRelease={this.resetTouch}
                   onResponderMove={this.updateRadialState}>
                 <View style={rcbStyles.svgContainer}>
-                    <Text>{this.state.ringProgress}</Text>
-                    <Text>{this.state.touchState.isSelected.toString()}</Text>
-                    <Text>{this.state.timesRounded.toString()}</Text>
-                    <Svg width={RADIAL_CHOOSER_DIA} height={RADIAL_CHOOSER_DIA}
-                         viewBox={"0 0 120 120"}>
-                        <Circle cx={RADIAL_CHOOSER_DIA / 2} cy={RADIAL_CHOOSER_DIA / 2}
-                                r={RADIUS}
-                                fill={"none"} stroke={"#e6e6e6"}
-                                strokeWidth={BORDER_RADIUS}/>
-
-                        <Circle cx={RADIAL_CHOOSER_DIA / 2} cy={RADIAL_CHOOSER_DIA / 2}
-                                r={RADIUS}
-                                fill={"none"} stroke={"#f77a52"}
-                                strokeWidth={BORDER_RADIUS}
-                                strokeDasharray={STROKE}
-                                strokeDashoffset={STROKE * (1 - this.state.ringProgress)}/>
-                    </Svg>
+                    <LoadingRing innerRadius={50} outerRadius={60} progress={this.state.ringProgress}/>
                 </View>
             </View>
         );
