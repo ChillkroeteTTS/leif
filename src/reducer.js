@@ -24,6 +24,7 @@ function mainReducer(state, action) {
 }
 
 // ------------------------- REDUCER ---------------------------
+
 registerReducer("test", function (state, action) {
     info("Hello World!");
     return state;
