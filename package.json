@@ -10,14 +10,18 @@
     "immutable": "^3.8.2",
     "react": "16.3.1",
     "react-native": "0.55.4",
+    "react-native-radial-counter": "^0.0.2",
     "react-native-svg": "^6.3.1",
     "redux": "^4.0.0",
-    "react-native-radial-counter": "^0.0.2"
+    "typescript": "^2.9.2"
   },
   "devDependencies": {
+    "@types/react": "^16.4.0",
+    "@types/react-native": "^0.55.22",
     "babel-jest": "23.0.1",
     "babel-preset-react-native": "4.0.0",
     "jest": "23.1.0",
+    "react-native-typescript-transformer": "^1.2.10",
     "react-test-renderer": "16.3.1"
   },
   "jest": {
