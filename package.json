@@ -12,7 +12,7 @@
     "react-native": "0.55.4",
     "react-native-svg": "^6.3.1",
     "redux": "^4.0.0",
-    "react-native-radial-chooser": "^0.0.2"
+    "react-native-radial-counter": "^0.0.2"
   },
   "devDependencies": {
     "babel-jest": "23.0.1",

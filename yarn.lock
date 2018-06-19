@@ -4191,9 +4191,9 @@ react-is@^16.3.1:
   version "16.4.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.4.0.tgz#cc9fdc855ac34d2e7d9d2eb7059bbc240d35ffcf"
 
-react-native-radial-chooser@^0.0.2:
+react-native-radial-counter@^0.0.2:
   version "0.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-radial-chooser/-/react-native-radial-chooser-0.0.2.tgz#a24ec08e37c37918cc3cbd53130c0d6bffdc2ba4"
+  resolved "https://registry.yarnpkg.com/react-native-radial-counter/-/react-native-radial-counter-0.0.2.tgz#85f20c425a2388c4a462f547dcfc869382bd763d"
   dependencies:
     react-native-svg "^6.3.1"
 
